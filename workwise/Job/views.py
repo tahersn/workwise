@@ -4,6 +4,8 @@ from .Forms import JobForm
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import JobSerializer
+from django.shortcuts import get_object_or_404
+
 
 
 
@@ -23,18 +25,22 @@ def createJob(request):
 
     return Response({'error': 'Method not allowed'}, status=405)
 
-# @api_view(['GET'])
+@api_view(['GET'])
 def GetJobs (request):
     jobs = Job.objects.all()
     serializer = JobSerializer(jobs, many=True)
     return Response(serializer.data)
 
-def getJobById (Job_id):
-    try:
-        job = Job.objects.get(pk=Job_id)
-        return job
-    except Job.DoesNotExist:
-        return Response({'Job Not Found'})
+#get one job by id
+@api_view(['GET'])
+def getJobById(request , job_id):
+    job = get_object_or_404(Job , pk=job_id)
+    if(request.method == 'GET'):
+        serializer = JobSerializer(job)
+        return Response(serializer.data)
+    else:
+        return Response({'error': 'Invalid request method'}, status=405)
+    return Response({'error': 'Invalid request method'}, status=405)        
 
 def deleteJob (Job_id):
     try:
@@ -42,22 +48,19 @@ def deleteJob (Job_id):
         return Response({'job deleted successfully'})
     except Job.DoesNotExist:
         return Response({'No Job Found'})       
-
+@api_view(['PUT'])
 def updateJob(request, job_id):
     try:
-        job = Job.objects.get(pk=job_id)
+        job = get_object_or_404(Job ,  pk=job_id)
 
-        if request.method == 'POST':
+        if request.method == 'PUT':
             serializer = JobSerializer(instance=job, data=request.data)
 
             if serializer.is_valid():
-                # If employer_id is not provided in the request data, you can set it here.
-                # This assumes that employer_id is a required field.
-                serializer.save(employer_id=2)
+                serializer.save()
                 return Response({'message': 'Job updated successfully'}, status=200)
             else:
                 return Response({'error': 'Verify your data'}, status=400)
-
     except Job.DoesNotExist:
         return Response({'error': 'Job not found'}, status=404)
 
