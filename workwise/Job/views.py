@@ -41,13 +41,15 @@ def getJobById(request , job_id):
     else:
         return Response({'error': 'Invalid request method'}, status=405)
     return Response({'error': 'Invalid request method'}, status=405)        
-
-def deleteJob (Job_id):
+@api_view(['DELETE'])
+def deleteJob (self , Job_id):
     try:
-        res = Job.objects.delete(pk=Job_id) 
+        job = get_object_or_404(Job , pk=Job_id) 
+        job.delete()
         return Response({'job deleted successfully'})
     except Job.DoesNotExist:
-        return Response({'No Job Found'})       
+        return Response({'No Job Found'})     
+
 @api_view(['PUT'])
 def updateJob(request, job_id):
     try:

@@ -7,7 +7,7 @@ from django.contrib import admin
 urlpatterns = [
     re_path('createJob', createJob),
     re_path('jobs' , GetJobs), 
-    re_path('deleteJob',deleteJob),
+    path('deleteJob/<int:Job_id>',deleteJob),
     path('job/<int:job_id>/', getJobById),
     path('updateJob/<int:job_id>',updateJob)
 ]
