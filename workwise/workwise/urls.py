@@ -18,8 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 from JobApplication.urls import router as jobapplication_router
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Job.urls')),
     path('api/', include(jobapplication_router.urls)),
+    path('api-auth/', include('users.urls'))
+
 ]
